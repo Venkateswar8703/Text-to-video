@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidForge AI — Text to Video Generator</title>
+    <meta name="description" content="Generate AI videos from text using VidForge AI. Powered by AWS Bedrock.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header" id="app-header">
+            <div class="logo-group">
+                <div class="logo-icon" id="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#a78bfa"/>
+                                <stop offset="100%" stop-color="#06b6d4"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M6 8L16 4L26 8V18L16 28L6 18V8Z" stroke="url(#logoGrad)" stroke-width="2.5" fill="none"/>
+                        <polygon points="13,12 13,22 22,17" fill="url(#logoGrad)" opacity="0.8"/>
+                    </svg>
+                </div>
+                <h1 class="logo-text">VidForge <span class="logo-ai">AI</span></h1>
+            </div>
+            <div class="header-badge">
+                <span class="badge-dot"></span>
+                Powered by AWS Bedrock
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section" id="hero-section">
+            <h2 class="hero-title">
+                Transform <span class="gradient-text">Text</span> into 
+                <span class="gradient-text-alt">Video</span>
+            </h2>
+            <p class="hero-subtitle">
+                Describe any scene or story, and AI will generate high-quality video using AWS Bedrock Video Models.
+            </p>
+        </section>
+
+        <!-- Generator Card -->
+        <main class="generator-card" id="generator-card">
+            <div class="card-inner">
+
+
+
+                <!-- Prompt Input Section -->
+                <div class="input-section">
+                    <label for="prompt-input" class="input-label">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                        Video Prompt / Scene Description
+                    </label>
+                    <textarea 
+                        id="prompt-input" 
+                        class="prompt-textarea" 
+                        placeholder="A cute golden retriever puppy playing happily in a green sunny park..."
+                        maxlength="1000"
+                        rows="4"
+                    >A cute golden retriever puppy running happily in a sunny green park with flowers.</textarea>
+                    <div class="input-footer">
+                        <span class="char-count" id="char-count">0 / 1000</span>
+                    </div>
+                </div>
+
+                <!-- AI Model Selection Section -->
+                <div class="model-section">
+                    <label class="input-label">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                            <polyline points="2 17 12 22 22 17"/>
+                            <polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                        AI Video Generator Model
+                    </label>
+                    <div class="model-options" id="model-options">
+                        <button type="button" class="model-btn active" data-model="amazon.nova-reel-v1:0">
+                            <span class="model-name">Amazon Nova Reel</span>
+                            <span class="model-sub">us-east-1 • 6s Clips</span>
+                        </button>
+                        <button type="button" class="model-btn" data-model="luma.ray-v2:0">
+                            <span class="model-name">Luma Ray v2</span>
+                            <span class="model-sub">us-west-2 • 9s Clips</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Target Duration Selection Section -->
+                <div class="duration-section">
+                    <label class="input-label">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Target Video Duration
+                    </label>
+                    <div class="duration-options" id="duration-options">
+                        <button type="button" class="duration-btn active" data-duration="60">
+                            <span class="duration-title">1 Min</span>
+                            <span class="duration-sub">7 Clips • FFmpeg Stitched</span>
+                        </button>
+                        <button type="button" class="duration-btn" data-duration="30">
+                            <span class="duration-title">30 Sec</span>
+                            <span class="duration-sub">4 Clips</span>
+                        </button>
+                        <button type="button" class="duration-btn" data-duration="300">
+                            <span class="duration-title">5 Min</span>
+                            <span class="duration-sub">34 Clips</span>
+                        </button>
+                        <button type="button" class="duration-btn" data-duration="9">
+                            <span class="duration-title">9 Sec</span>
+                            <span class="duration-sub">Single Clip</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <button id="generate-btn" class="generate-btn" type="button">
+                    <span class="btn-content">
+                        <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                        </svg>
+                        <span class="btn-text">Generate Video</span>
+                    </span>
+                    <span class="btn-loader" id="btn-loader">
+                        <svg class="spinner" width="22" height="22" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" stroke-linecap="round"/>
+                        </svg>
+                        <span class="btn-loading-text">Rendering Video...</span>
+                    </span>
+                </button>
+            </div>
+        </main>
+
+        <!-- Status / Progress Section -->
+        <section class="status-section" id="status-section" style="display: none;">
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="status-indicator" id="status-indicator">
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-dot"></div>
+                    </div>
+                    <div class="status-info">
+                        <div class="status-title-row">
+                            <span class="status-label" id="status-label">Rendering</span>
+                            <span class="clip-badge" id="clip-progress-badge" style="display: none;">0 / 0 Clips</span>
+                        </div>
+                        <span class="status-detail" id="status-detail">Your video is being rendered by AWS Bedrock...</span>
+                    </div>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progress-bar"></div>
+                </div>
+                <div class="status-meta">
+                    <span id="status-task-id" class="task-id-display"></span>
+                    <span id="status-elapsed" class="elapsed-time"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Result Section -->
+        <section class="result-section" id="result-section" style="display: none;">
+            <div class="result-card">
+                <div class="result-header">
+                    <h3 class="result-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Video Rendered Successfully!
+                    </h3>
+                </div>
+                <div class="video-container" id="video-container">
+                    <video id="result-video" controls autoplay loop class="result-video">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="result-actions">
+                    <a id="download-btn" class="action-btn action-btn-primary" href="#" target="_blank" download="vidforge-video.mp4">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download Video
+                    </a>
+                    <button id="new-generation-btn" class="action-btn action-btn-secondary" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                        </svg>
+                        New Generation
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Section -->
+        <section class="error-section" id="error-section" style="display: none;">
+            <div class="error-card">
+                <div class="error-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <h3 class="error-title">Rendering Failed</h3>
+                <p class="error-message" id="error-message">Something went wrong. Please try again.</p>
+                <button id="retry-btn" class="action-btn action-btn-primary" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                    </svg>
+                    Try Again
+                </button>
+            </div>
+        </section>
+
+        <footer class="app-footer" id="app-footer">
+            <p>Built with <span class="footer-heart">♥</span> using AWS Bedrock</p>
+        </footer>
+    </div>
+
+    <script src="app.js?v=2"></script>
+</body>
+</html>
